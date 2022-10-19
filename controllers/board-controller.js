@@ -1,39 +1,43 @@
-const Board = require("../models/board");
-const Column = require("../models/column");
-const Task = require("../models/task");
-const createPath = require("../helpers/create-path");
+import Board from "../models/board.js";
+import Column from "../models/column.js";
+import Task from "../models/task.js";
 
-const getAllBoards = async (req, res) => {
+export const getAllBoards = async (req, res) => {
   const boards = await Board.find();
-  res.send(boards);
+  const columns = await Column.find().sort({ order: 1 });
+  res.send(
+    boards.map(({ title, description, _id }) => ({
+      title,
+      description,
+      _id,
+      columnIds: columns
+        .filter(({ boardId }) => boardId === _id.toString())
+        .map(({ _id }) => _id),
+    }))
+  );
 };
 
-const getBoardById = async (req, res) => {
+export const getBoardById = async (req, res) => {
   const { boardId } = req.params;
-  const board = await Board.findById(boardId);
-  const columns = await Column.find({ boardId }).sort({ order: 1 });
-  const tasks = await Task.find({ boardId }).sort({ order: 1 });
-  const columnsWithTasks = columns.map(({ title, _id, boardId, order }) => ({
-    order,
-    title,
-    _id,
-    boardId,
-    tasks: tasks.filter((task) => task.columnId === _id.toString()),
-  }));
+  const { title, description, _id } = await Board.findById(boardId);
+  const columns = await Column.find({ boardId });
 
-  const { _id, title, description } = board;
-  res.send({ _id, title, description, columns: columnsWithTasks });
-  // res.send(board);
+  res.send({
+    title,
+    description,
+    _id,
+    columnIds: columns.map(({ _id }) => _id),
+  });
 };
 
-const creatBoard = (req, res) => {
+export const creatBoard = (req, res) => {
   let data = "";
   req.on("data", (chunk) => {
     data += chunk;
   });
   req.on("end", () => {
     const { title, description } = JSON.parse(data.toString());
-    const board = new Board({ title, description });
+    const board = new Board({ title, description, columnIds: [] });
     board
       .save()
       .then((result) => res.status(201).send(result))
@@ -43,7 +47,7 @@ const creatBoard = (req, res) => {
   });
 };
 
-module.exports = {
+export default {
   getAllBoards,
   getBoardById,
   creatBoard,

@@ -1,14 +1,14 @@
-const express = require("express");
-const {
+import { Router } from "express";
+import {
   getAllBoards,
   getBoardById,
   creatBoard,
-} = require("../controllers/board-controller");
+} from "../controllers/board-controller.js";
 
-const router = express.Router();
+const router = Router();
 
 router.get("/boards", getAllBoards);
 router.get("/boards/:boardId", getBoardById);
 router.post("/boards", creatBoard);
 
-module.exports = router;
+export default router;

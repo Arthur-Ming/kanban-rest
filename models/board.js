@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const boardSchema = new Schema(
@@ -9,9 +9,15 @@ const boardSchema = new Schema(
     },
     description: {
       type: String,
-      required: false,
+      required: true,
       default: "",
     },
+    columnIds: [
+      {
+        type: String,
+        required: true,
+      },
+    ],
   },
   {
     versionKey: false,
@@ -20,4 +26,4 @@ const boardSchema = new Schema(
 
 const Board = mongoose.model("Board", boardSchema);
 
-module.exports = Board;
+export default Board;

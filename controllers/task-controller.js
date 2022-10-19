@@ -1,18 +1,15 @@
-const Task = require("../models/task");
-const Board = require("../models/board");
-const Column = require("../models/column");
-const createPath = require("../helpers/create-path");
+import Board from "../models/board.js";
+import Column from "../models/column.js";
+import Task from "../models/task.js";
 
-const getAllTasks = async (req, res) => {
-  const { boardId, columnId } = req.params;
-  const tasks = await Task.find({ boardId, columnId });
+export const getAllTasks = async (req, res) => {
+  const { columnId } = req.params;
+  const tasks = await Task.find({ columnId });
   res.send(tasks);
 };
 
-const creatTask = async (req, res) => {
+export const creatTask = async (req, res) => {
   const { boardId, columnId } = req.params;
-  const board = await Board.findById(boardId);
-  const column = await Column.findById(columnId);
 
   let data = "";
   req.on("data", (chunk) => {
@@ -33,7 +30,7 @@ const creatTask = async (req, res) => {
   });
 };
 
-const updateTask = async (req, res) => {
+export const updateTask = async (req, res) => {
   const { boardId, columnId: newColumn, taskId } = req.params;
   const [task] = await Task.find({ boardId, _id: taskId });
   const oldColumn = task.columnId;
@@ -75,15 +72,8 @@ const updateTask = async (req, res) => {
   });
 };
 
-const deleteTask = (req, res) => {
+export const deleteTask = (req, res) => {
   Task.findByIdAndDelete(req.params.taskId).then((result) => {
     res.sendStatus(200);
   });
-};
-
-module.exports = {
-  getAllTasks,
-  creatTask,
-  updateTask,
-  deleteTask,
 };

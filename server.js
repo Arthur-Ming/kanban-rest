@@ -1,10 +1,10 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const boardRoutes = require("./routes/board-routes");
-const columnRoutes = require("./routes/column-routes");
-const taskRoutes = require("./routes/task-routes");
-const createPath = require("./helpers/create-path");
-const cors = require("cors");
+import express from "express";
+import mongoose from "mongoose";
+import boardRoutes from "./routes/board-routes.js";
+import columnRoutes from "./routes/column-routes.js";
+import taskRoutes from "./routes/task-routes.js";
+import createPath from "./helpers/create-path.js";
+import cors from "cors";
 
 const app = express();
 
@@ -14,7 +14,7 @@ const db =
 
 mongoose
   .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then((res) => console.log("Connected to DB"))
+  .then(() => console.log("Connected to DB"))
   .catch((error) => console.log(error));
 
 app.listen(PORT, (error) => {
@@ -22,7 +22,6 @@ app.listen(PORT, (error) => {
 });
 
 app.use(cors());
-
 app.use(boardRoutes);
 app.use(columnRoutes);
 app.use(taskRoutes);

@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const columnSchema = new Schema(
@@ -15,6 +15,12 @@ const columnSchema = new Schema(
       type: Number,
       required: true,
     },
+    taskIds: [
+      {
+        type: String,
+        required: true,
+      },
+    ],
   },
   {
     versionKey: false,
@@ -23,4 +29,4 @@ const columnSchema = new Schema(
 
 const Column = mongoose.model("Column", columnSchema);
 
-module.exports = Column;
+export default Column;

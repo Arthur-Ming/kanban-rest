@@ -3,7 +3,7 @@ import {
   getAllBoards,
   getBoardById,
   creatBoard,
-} from "../controllers/board-controller.js";
+} from "../controllers/board.js";
 
 const router = Router();
 

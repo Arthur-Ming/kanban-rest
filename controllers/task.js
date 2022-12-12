@@ -1,6 +1,7 @@
 import Board from "../models/board.js";
 import Column from "../models/column.js";
 import Task from "../models/task.js";
+import mongoose from "mongoose";
 
 export const getAllTasks = async (req, res) => {
   const { columnId } = req.params;
@@ -10,24 +11,27 @@ export const getAllTasks = async (req, res) => {
 
 export const creatTask = async (req, res) => {
   const { boardId, columnId } = req.params;
+  const body = req.body;
+  const column = await Column.findById(columnId);
+  const board = await Board.findById(boardId);
 
-  let data = "";
-  req.on("data", (chunk) => {
-    data += chunk;
+  const task = new Task({
+    ...body,
+    _id: new mongoose.Types.ObjectId(),
+    boardId: board._id,
+    columnId: column._id,
   });
 
-  req.on("end", async () => {
-    const { title, description = "" } = JSON.parse(data.toString());
-    const tasks = await Task.find({ boardId, columnId });
-    const order = tasks.length + 1;
-    const task = new Task({ title, description, boardId, columnId, order });
-    task
-      .save()
-      .then((result) => res.status(201).send(result))
-      .catch((error) => {
-        console.log(error);
-      });
-  });
+  task
+    .save()
+    .then((result) => {
+      column.tasks.push(result);
+      column.save();
+      res.status(201).send(result);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 };
 
 export const updateTask = async (req, res) => {

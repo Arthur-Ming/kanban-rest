@@ -5,7 +5,7 @@ import {
   creatColumn,
   updateColumn,
   deleteColumn,
-} from "../controllers/column-controller.js";
+} from "../controllers/column.js";
 
 const router = Router();
 

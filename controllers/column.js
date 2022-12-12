@@ -1,4 +1,7 @@
 import Column from "../models/column.js";
+import Board from "../models/board.js";
+import mongoose from "mongoose";
+
 import createPath from "../helpers/create-path.js";
 
 export const getAllColumns = async (req, res) => {
@@ -20,40 +23,36 @@ export const getAllColumns = async (req, res) => {
 
 export const getColumnById = async (req, res) => {
   const { boardId, columnId } = req.params;
-  const column = await Column.findOne({ boardId, columnId });
-  const tasks = await Column.find({ boardId, columnId });
-  const { _id, title } = column;
-  res.send({
-    _id,
-    title,
-    tasks,
-  });
+  // const column = await Column.findOne({ boardId, columnId });
+  Column.findOne({ boardId, columnId })
+    .populate("tasks")
+    .exec(function (err, column) {
+      // if (err) return handleError(err);
+      //   console.log("The author is %s", person);
+
+      res.send(column);
+      // prints "The author is Ian Fleming"
+    });
 };
 
-export const creatColumn = (req, res) => {
+export const creatColumn = async (req, res) => {
   const boardId = req.params.boardId;
-  Column.findById(boardId)
-    .then(() => {
-      let data = "";
-      req.on("data", (chunk) => {
-        data += chunk;
-      });
-      req.on("end", async () => {
-        const { title } = JSON.parse(data.toString());
-        const columns = await Column.find({ boardId });
-        const order = columns.length + 1;
-        const column = new Column({ title, boardId, board: boardId, order });
-        column
-          .save()
-          .then((result) => res.status(201).send(result))
-          .catch((error) => {
-            console.log(error);
-          });
-      });
+  const body = req.body;
+  const board = await Board.findById(boardId);
+  const column = new Column({
+    ...body,
+    _id: new mongoose.Types.ObjectId(),
+    boardId: board._id,
+  });
+  column
+    .save()
+    .then((result) => {
+      board.columns.push(result);
+      board.save();
+      res.status(201).send(result);
     })
     .catch((error) => {
       console.log(error);
-      res.render(createPath("error"), { title: "Error" });
     });
 };
 

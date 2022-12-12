@@ -1,9 +1,10 @@
 import express from "express";
 import mongoose from "mongoose";
-import boardRoutes from "./routes/board-routes.js";
-import columnRoutes from "./routes/column-routes.js";
-import taskRoutes from "./routes/task-routes.js";
+import boardRoutes from "./routes/board.js";
+import columnRoutes from "./routes/column.js";
+import taskRoutes from "./routes/task.js";
 import createPath from "./helpers/create-path.js";
+import bodyParser from "body-parser";
 import cors from "cors";
 
 const app = express();
@@ -22,10 +23,12 @@ app.listen(PORT, (error) => {
 });
 
 app.use(cors());
+app.use(bodyParser.json());
+
 app.use(boardRoutes);
 app.use(columnRoutes);
 app.use(taskRoutes);
-
+/* 
 app.use((req, res) => {
   res.status(404).sendFile(createPath("error"));
-});
+}); */

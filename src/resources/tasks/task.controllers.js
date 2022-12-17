@@ -1,11 +1,15 @@
 import { getAll, create, get, remove, update } from './task.service.js';
 import { StatusCodes } from 'http-status-codes';
 
-export const getAllTasks = async (req, res) => {
+export const getAllTasks = async (req, res, next) => {
   const { boardId, columnId } = req.params;
 
-  const tasks = await getAll(boardId, columnId);
-  res.send(tasks);
+  try {
+    const tasks = await getAll(boardId, columnId);
+    res.send(tasks);
+  } catch (error) {
+    return next(error);
+  }
 };
 
 export const getTaskById = async (req, res, next) => {
@@ -26,7 +30,6 @@ export const creatTask = async (req, res, next) => {
     const board = await create(boardId, columnId, body);
     res.status(StatusCodes.OK).send(board);
   } catch (err) {
-    console.log(err);
     return next(err);
   }
 };

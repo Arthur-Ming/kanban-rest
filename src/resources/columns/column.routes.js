@@ -8,25 +8,34 @@ import {
   updateColumn,
 } from './column.controllers.js';
 import schemas from '../../utils/validation/schemas.js';
+import { asyncHandler } from '../../utils/asyncHandler.js';
 
 const { boardId, columnId, column } = schemas;
 const router = Router();
 
 router
-  .get('/boards/:boardId/columns', validator(boardId, 'params'), getAllColumns)
-  .get('/boards/:boardId/columns/:columnId', validator(columnId, 'params'), getColumnById)
+  .get('/boards/:boardId/columns', validator(boardId, 'params'), asyncHandler(getAllColumns))
+  .get(
+    '/boards/:boardId/columns/:columnId',
+    validator(columnId, 'params'),
+    asyncHandler(getColumnById)
+  )
   .post(
     '/boards/:boardId/columns',
     validator(boardId, 'params'),
     validator(column, 'body'),
-    creatColumn
+    asyncHandler(creatColumn)
   )
-  .delete('/boards/:boardId/columns/:columnId', validator(columnId, 'params'), deleteColumn)
+  .delete(
+    '/boards/:boardId/columns/:columnId',
+    validator(columnId, 'params'),
+    asyncHandler(deleteColumn)
+  )
   .put(
     '/boards/:boardId/columns/:columnId',
     validator(columnId, 'params'),
     validator(column, 'body'),
-    updateColumn
+    asyncHandler(updateColumn)
   );
 
 export default router;

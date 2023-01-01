@@ -1,56 +1,36 @@
 import { getAll, get, create, remove, update } from './board.service.js';
 import { StatusCodes } from 'http-status-codes';
 
-export const getAllBoards = async (req, res, next) => {
-  try {
-    const boards = await getAll();
-    res.send(boards);
-  } catch (error) {
-    return next(error);
-  }
+export const getAllBoards = async (req, res) => {
+  const boards = await getAll();
+  res.send(boards);
 };
 
-export const getBoardById = async (req, res, next) => {
+export const getBoardById = async (req, res) => {
   const { boardId } = req.params;
 
-  try {
-    const board = await get(boardId);
-    res.send(board);
-  } catch (error) {
-    return next(error);
-  }
+  const board = await get(boardId);
+  res.send(board);
 };
 
-export const creatBoard = async (req, res, next) => {
+export const creatBoard = async (req, res) => {
   const body = req.body;
 
-  try {
-    const board = await create(body);
-    res.status(StatusCodes.OK).send(board);
-  } catch (err) {
-    return next(err);
-  }
+  const board = await create(body);
+  res.status(StatusCodes.OK).send(board);
 };
 
-export const deleteBoard = async (req, res, next) => {
+export const deleteBoard = async (req, res) => {
   const { boardId } = req.params;
 
-  try {
-    await remove(boardId);
-    res.sendStatus(StatusCodes.OK);
-  } catch (err) {
-    return next(err);
-  }
+  await remove(boardId);
+  res.sendStatus(StatusCodes.OK);
 };
 
-export const updateBoard = async (req, res, next) => {
+export const updateBoard = async (req, res) => {
   const { boardId } = req.params;
   const body = req.body;
 
-  try {
-    const todo = await update(boardId, body);
-    res.status(StatusCodes.OK).send(todo);
-  } catch (err) {
-    return next(err);
-  }
+  const todo = await update(boardId, body);
+  res.status(StatusCodes.OK).send(todo);
 };

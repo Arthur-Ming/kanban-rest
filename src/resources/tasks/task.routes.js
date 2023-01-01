@@ -2,29 +2,37 @@ import { Router } from 'express';
 import validator from '../../utils/validation/validator.js';
 import { getAllTasks, creatTask, getTaskById, deleteTask, updateTask } from './task.controllers.js';
 import schemas from '../../utils/validation/schemas.js';
-
-const { boardId, columnId, taskId, task } = schemas;
+import { asyncHandler } from '../../utils/asyncHandler.js';
+const { columnId, taskId, task } = schemas;
 const router = Router();
 
 router
-  .get('/boards/:boardId/columns/:columnId/tasks', validator(columnId, 'params'), getAllTasks)
-  .get('/boards/:boardId/columns/:columnId/tasks/:taskId', validator(taskId, 'params'), getTaskById)
+  .get(
+    '/boards/:boardId/columns/:columnId/tasks',
+    validator(columnId, 'params'),
+    asyncHandler(getAllTasks)
+  )
+  .get(
+    '/boards/:boardId/columns/:columnId/tasks/:taskId',
+    validator(taskId, 'params'),
+    asyncHandler(getTaskById)
+  )
   .post(
     '/boards/:boardId/columns/:columnId/tasks',
     validator(columnId, 'params'),
     validator(task, 'body'),
-    creatTask
+    asyncHandler(creatTask)
   )
   .delete(
     '/boards/:boardId/columns/:columnId/tasks/:taskId',
     validator(taskId, 'params'),
-    deleteTask
+    asyncHandler(deleteTask)
   )
   .put(
     '/boards/:boardId/columns/:columnId/tasks/:taskId',
     validator(taskId, 'params'),
     validator(task, 'body'),
-    updateTask
+    asyncHandler(updateTask)
   );
 
 export default router;

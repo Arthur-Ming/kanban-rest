@@ -5,49 +5,24 @@ import mongoose from 'mongoose';
 import { NotFoundError } from '../../errors/appErrors.js';
 
 export const getAll = async (boardId, columnId) => {
-  const [board, column] = await Promise.all([Board.findById(boardId), Column.findById(columnId)]);
-
-  if (!board) {
-    throw new NotFoundError('board', { id: boardId });
-  }
-
-  if (!column) {
-    throw new NotFoundError('column', { id: columnId });
-  }
   return await Task.find({ boardId, columnId });
 };
 
 export const get = async (boardId, columnId, taskId) => {
-  const [board, column, task] = await Promise.all([
-    Board.findById(boardId),
-    Column.findById(columnId),
-    Task.findById(taskId),
-  ]);
-
-  if (!board) {
-    throw new NotFoundError('board', { id: boardId });
-  }
-
-  if (!column) {
-    throw new NotFoundError('column', { id: columnId });
-  }
+  const task = await Task.findOne({ _id: taskId, boardId, columnId });
 
   if (!task) {
-    throw new NotFoundError('task', { id: taskId });
+    throw new NotFoundError('task', { id: taskId, boardId, columnId });
   }
 
   return task;
 };
 
 export const create = async (boardId, columnId, taskBody) => {
-  const [board, column] = await Promise.all([Board.findById(boardId), Column.findById(columnId)]);
-
-  if (!board) {
-    throw new NotFoundError('board', { id: boardId });
-  }
+  const column = await Column.findOne({ _id: columnId, boardId });
 
   if (!column) {
-    throw new NotFoundError('column', { id: columnId });
+    throw new NotFoundError('column', { id: columnId, boardId });
   }
 
   const task = await Task.create({
@@ -56,41 +31,29 @@ export const create = async (boardId, columnId, taskBody) => {
     ...taskBody,
   });
 
-  await Column.findByIdAndUpdate(columnId, { $push: { tasks: task } });
+  await column.updateOne({ $push: { tasks: task } });
 
   return task;
 };
 
 export const remove = async (boardId, columnId, taskId) => {
-  const [board, column] = await Promise.all([Board.findById(boardId), Column.findById(columnId)]);
-
-  if (!board) {
-    throw new NotFoundError('board', { id: boardId });
-  }
+  const [column] = await Promise.all([
+    Column.findOneAndUpdate({ _id: columnId, boardId }, { $pull: { tasks: taskId } }),
+    Task.deleteOne({ _id: taskId, boardId, columnId }),
+  ]);
 
   if (!column) {
-    throw new NotFoundError('column', { id: columnId });
+    throw new NotFoundError('column', { id: columnId, boardId });
   }
-  await Column.findByIdAndUpdate(columnId, { $pull: { tasks: taskId } });
-  await Task.findByIdAndDelete(taskId);
 };
 
 export const update = async (boardId, columnId, taskId, body) => {
-  const [board, column] = await Promise.all([Board.findById(boardId), Column.findById(columnId)]);
-
-  if (!board) {
-    throw new NotFoundError('board', { id: boardId });
-  }
-
-  if (!column) {
-    throw new NotFoundError('column', { id: columnId });
-  }
-  const task = await Task.findByIdAndUpdate(taskId, body, {
-    returnDocument: 'after',
+  const task = await Task.findOneAndUpdate({ _id: taskId, boardId, columnId }, body, {
+    new: true,
   });
 
   if (!task) {
-    throw new NotFoundError('task', { id: taskId });
+    throw new NotFoundError('task', { id: taskId, columnId, boardId });
   }
   return task;
 };

@@ -31,6 +31,6 @@ export const updateBoard = async (req, res) => {
   const { boardId } = req.params;
   const body = req.body;
 
-  const todo = await update(boardId, body);
-  res.status(StatusCodes.OK).send(todo);
+  const board = await update(boardId, body);
+  res.status(StatusCodes.OK).send(board);
 };

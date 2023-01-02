@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import Router from 'koa-router';
 import validator from '../../utils/validation/validator.js';
 import {
   getAllColumns,
@@ -8,34 +8,15 @@ import {
   updateColumn,
 } from './column.controllers.js';
 import schemas from '../../utils/validation/schemas.js';
-import { asyncHandler } from '../../utils/asyncHandler.js';
 
 const { boardId, columnId, column } = schemas;
-const router = Router();
+const columnsRouter = Router({ prefix: '/boards/:boardId/columns' });
 
-router
-  .get('/boards/:boardId/columns', validator(boardId, 'params'), asyncHandler(getAllColumns))
-  .get(
-    '/boards/:boardId/columns/:columnId',
-    validator(columnId, 'params'),
-    asyncHandler(getColumnById)
-  )
-  .post(
-    '/boards/:boardId/columns',
-    validator(boardId, 'params'),
-    validator(column, 'body'),
-    asyncHandler(creatColumn)
-  )
-  .delete(
-    '/boards/:boardId/columns/:columnId',
-    validator(columnId, 'params'),
-    asyncHandler(deleteColumn)
-  )
-  .put(
-    '/boards/:boardId/columns/:columnId',
-    validator(columnId, 'params'),
-    validator(column, 'body'),
-    asyncHandler(updateColumn)
-  );
+columnsRouter
+  .get('/', validator(boardId, 'params'), getAllColumns)
+  .get('/:columnId', validator(columnId, 'params'), getColumnById)
+  .post('/', validator(boardId, 'params'), validator(column, 'body'), creatColumn)
+  .delete('/:columnId', validator(columnId, 'params'), deleteColumn)
+  .put('/:columnId', validator(columnId, 'params'), validator(column, 'body'), updateColumn);
 
-export default router;
+export default columnsRouter;

@@ -1,39 +1,30 @@
 import { getAll, create, get, remove, update } from './task.service.js';
-import { StatusCodes } from 'http-status-codes';
 
-export const getAllTasks = async (req, res) => {
+export const getAllTasks = async (ctx) => {
+  const { boardId, columnId } = ctx.params;
+  ctx.body = await getAll(boardId, columnId);
+};
+
+export const getTaskById = async (ctx) => {
+  const { boardId, columnId, taskId } = ctx.params;
+  ctx.body = await get(boardId, columnId, taskId);
+};
+
+export const creatTask = async (ctx) => {
   const { boardId, columnId } = req.params;
+  const body = ctx.request.body;
 
-  const tasks = await getAll(boardId, columnId);
-  res.send(tasks);
+  ctx.body = await create(boardId, columnId, body);
 };
 
-export const getTaskById = async (req, res) => {
-  const { boardId, columnId, taskId } = req.params;
-
-  const task = await get(boardId, columnId, taskId);
-  res.send(task);
+export const deleteTask = async (ctx) => {
+  const { boardId, columnId, taskId } = ctx.params;
+  ctx.body = await remove(boardId, columnId, taskId);
 };
 
-export const creatTask = async (req, res) => {
-  const body = req.body;
-  const { boardId, columnId } = req.params;
+export const updateTask = async (ctx) => {
+  const { boardId, columnId, taskId } = ctx.params;
+  const body = ctx.request.body;
 
-  const board = await create(boardId, columnId, body);
-  res.status(StatusCodes.OK).send(board);
-};
-
-export const deleteTask = async (req, res) => {
-  const { boardId, columnId, taskId } = req.params;
-
-  await remove(boardId, columnId, taskId);
-  res.sendStatus(StatusCodes.OK);
-};
-
-export const updateTask = async (req, res) => {
-  const { boardId, columnId, taskId } = req.params;
-  const body = req.body;
-
-  const task = await update(boardId, columnId, taskId, body);
-  res.status(StatusCodes.OK).send(task);
+  ctx.body = await update(boardId, columnId, taskId, body);
 };

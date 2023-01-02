@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import Router from 'koa-router';
 import validator from '../../utils/validation/validator.js';
 import {
   getAllBoards,
@@ -8,21 +8,15 @@ import {
   updateBoard,
 } from './board.controllers.js';
 import schemas from '../../utils/validation/schemas.js';
-import { asyncHandler } from '../../utils/asyncHandler.js';
 
 const { boardId, board } = schemas;
-const router = Router();
+const boardsRouter = Router({ prefix: '/boards' });
 
-router
-  .get('/boards', asyncHandler(getAllBoards))
-  .get('/boards/:boardId', validator(boardId, 'params'), asyncHandler(getBoardById))
-  .post('/boards', validator(board, 'body'), asyncHandler(creatBoard))
-  .delete('/boards/:boardId', validator(boardId, 'params'), asyncHandler(deleteBoard))
-  .put(
-    '/boards/:boardId',
-    validator(boardId, 'params'),
-    validator(board, 'body'),
-    asyncHandler(updateBoard)
-  );
+boardsRouter
+  .get('/', getAllBoards)
+  .get('/:boardId', validator(boardId, 'params'), getBoardById)
+  .post('/', validator(board, 'body'), creatBoard)
+  .delete('/:boardId', validator(boardId, 'params'), deleteBoard)
+  .put('/:boardId', validator(boardId, 'params'), validator(board, 'body'), updateBoard);
 
-export default router;
+export default boardsRouter;

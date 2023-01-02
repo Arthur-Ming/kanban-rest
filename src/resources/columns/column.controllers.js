@@ -1,39 +1,30 @@
 import { getAll, create, get, remove, update } from './column.service.js';
 import { StatusCodes } from 'http-status-codes';
 
-export const getAllColumns = async (req, res) => {
-  const { boardId } = req.params;
-
-  const columns = await getAll(boardId);
-  res.send(columns);
+export const getAllColumns = async (ctx) => {
+  const { boardId } = ctx.params;
+  ctx.body = await getAll(boardId);
 };
 
-export const getColumnById = async (req, res) => {
-  const { boardId, columnId } = req.params;
-
-  const column = await get(boardId, columnId);
-  res.send(column);
+export const getColumnById = async (ctx) => {
+  const { boardId, columnId } = ctx.params;
+  ctx.body = await get(boardId, columnId);
 };
 
-export const creatColumn = async (req, res) => {
-  const body = req.body;
-  const { boardId } = req.params;
-
-  const column = await create(boardId, body);
-  res.status(StatusCodes.OK).send(column);
+export const creatColumn = async (ctx) => {
+  const body = ctx.request.body;
+  const { boardId } = ctx.params;
+  ctx.body = await create(boardId, body);
 };
 
-export const deleteColumn = async (req, res) => {
-  const { boardId, columnId } = req.params;
-
-  await remove(boardId, columnId);
-  res.sendStatus(StatusCodes.OK);
+export const deleteColumn = async (ctx) => {
+  const { boardId, columnId } = ctx.params;
+  ctx.body = await remove(boardId, columnId);
 };
 
-export const updateColumn = async (req, res) => {
-  const { boardId, columnId } = req.params;
-  const body = req.body;
+export const updateColumn = async (ctx) => {
+  const { boardId, columnId } = ctx.params;
+  const body = ctx.request.body;
 
-  const todo = await update(boardId, columnId, body);
-  res.status(StatusCodes.OK).send(todo);
+  ctx.body = await update(boardId, columnId, body);
 };

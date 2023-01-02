@@ -37,14 +37,20 @@ export const create = async (boardId, columnId, taskBody) => {
 };
 
 export const remove = async (boardId, columnId, taskId) => {
-  const [column] = await Promise.all([
+  const [column, task] = await Promise.all([
     Column.findOneAndUpdate({ _id: columnId, boardId }, { $pull: { tasks: taskId } }),
-    Task.deleteOne({ _id: taskId, boardId, columnId }),
+    Task.findOneAndDelete({ _id: taskId, boardId, columnId }),
   ]);
 
   if (!column) {
     throw new NotFoundError('column', { id: columnId, boardId });
   }
+
+  if (!task) {
+    throw new NotFoundError('task', { id: taskId, boardId, columnId });
+  }
+
+  return task;
 };
 
 export const update = async (boardId, columnId, taskId, body) => {

@@ -35,6 +35,8 @@ export const remove = async (boardId) => {
   if (!board) {
     throw new NotFoundError('board', { id: boardId });
   }
+
+  return board;
 };
 
 export const update = async (boardId, body) => {

@@ -1,14 +1,17 @@
 import { StatusCodes, getReasonPhrase } from 'http-status-codes';
 
-const errorHandler = (err, req, res, next) => {
-  if (err.status) {
-    res.status(err.status).send(err.message);
-  } else {
-    res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .send(getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR));
+const errorHandler = async (ctx, next) => {
+  try {
+    await next();
+  } catch (err) {
+    if (err.status) {
+      ctx.status = err.status;
+      ctx.body = err.message;
+    } else {
+      ctx.status = StatusCodes.INTERNAL_SERVER_ERROR;
+      ctx.body = getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR);
+    }
   }
-  next();
 };
 
 export default errorHandler;

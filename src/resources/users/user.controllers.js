@@ -1,6 +1,7 @@
 import User from './user.model.js';
 import { readFile } from 'node:fs/promises';
 import { v4 as uuid } from 'uuid';
+import Session from '../session/session.model.js';
 
 const users = JSON.parse(await readFile(new URL('../../data/users.json', import.meta.url)));
 
@@ -30,6 +31,12 @@ export const login = async (ctx, next) => {
 
     const token = uuid();
 
-    ctx.body = { token };
+    await Session.create({ token, user /* , lastVisit: new Date() */ });
+
+    ctx.body = { token, name: user.displayName, id: user._id };
   })(ctx, next);
+};
+
+export const getAllUsers = async (ctx) => {
+  ctx.body = 'users';
 };

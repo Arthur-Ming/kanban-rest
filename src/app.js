@@ -5,7 +5,6 @@ import columnsRouter from './resources/columns/column.routes.js';
 import tasksRouter from './resources/tasks/task.routes.js';
 import usersRouter from './resources/users/user.routes.js';
 import errorHandler from './errors/errorHandler.js';
-
 const app = new Koa();
 
 app.use(errorHandler);

@@ -1,4 +1,4 @@
-import { StatusCodes } from 'http-status-codes';
+import { StatusCodes, getReasonPhrase } from 'http-status-codes';
 
 class AppError extends Error {
   constructor(message) {
@@ -31,5 +31,19 @@ export class UnprocessableEntityError extends AppError {
   constructor(message) {
     super(message);
     this.status = StatusCodes.UNPROCESSABLE_ENTITY;
+  }
+}
+
+export class AuthorizationError extends AppError {
+  constructor(message) {
+    super(message || getReasonPhrase(StatusCodes.UNAUTHORIZED));
+    this.status = StatusCodes.UNAUTHORIZED;
+  }
+}
+
+export class AuthenticationError extends AppError {
+  constructor(message) {
+    super(message || getReasonPhrase(StatusCodes.FORBIDDEN));
+    this.status = StatusCodes.FORBIDDEN;
   }
 }

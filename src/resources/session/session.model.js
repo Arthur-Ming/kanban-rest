@@ -1,21 +1,19 @@
 import mongoose from 'mongoose';
 
-const sessionSchema = new mongoose.Schema(
-  {
-    token: {
-      type: String,
-      unique: true,
-      required: true,
-    },
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: 'User',
-    },
-    expireAt: { type: Date, expires: 11 },
+const sessionSchema = new mongoose.Schema({
+  token: {
+    type: String,
+    unique: true,
+    required: true,
   },
-  { timestamps: true }
-);
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'User',
+  },
+
+  expire: { type: Number, default: Date.now() + 60 },
+});
 
 const Session = mongoose.model('Session', sessionSchema);
 

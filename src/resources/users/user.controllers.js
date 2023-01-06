@@ -1,22 +1,16 @@
 import User from './user.model.js';
-import { readFile } from 'node:fs/promises';
 import { v4 as uuid } from 'uuid';
 import Session from '../session/session.model.js';
-
-const users = JSON.parse(await readFile(new URL('../../data/users.json', import.meta.url)));
-
 import passport from '../../libs/passport.js';
+import { save } from './user.service.js';
 
-export const setTestUsers = async (ctx) => {
-  await User.deleteMany();
+export const register = async (ctx) => {
+  const body = ctx.request.body;
 
-  for (const user of users.users) {
-    const u = new User(user);
-    await u.setPassword(user.password);
-    await u.save();
-  }
-
-  ctx.body = users;
+  const u = await save(body);
+  await u.setPassword(body.password);
+  const { name, _id: id } = await u.save();
+  ctx.body = { name, id };
 };
 
 export const login = async (ctx, next) => {
@@ -30,12 +24,16 @@ export const login = async (ctx, next) => {
     }
 
     const token = uuid();
-    await Session.findOneAndUpdate({ user }, { token, user }, { upsert: true });
+    await Session.findOneAndUpdate({ user }, { token, user }, { upsert: true, new: true });
 
     ctx.body = { token, name: user.displayName, id: user._id };
   })(ctx, next);
 };
 
 export const getAllUsers = async (ctx) => {
+  ctx.body = 'users';
+};
+
+export const getUserById = async (ctx) => {
   ctx.body = 'users';
 };

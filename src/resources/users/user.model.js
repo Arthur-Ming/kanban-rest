@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import schemaOptions from '../../utils/schemaOptions.js';
 import crypto from 'node:crypto';
 import config from '../../common/config.js';
+import connection from '../../utils/connection.js';
 
 const Schema = mongoose.Schema;
 
@@ -9,13 +10,12 @@ const userSchema = new Schema(
   {
     email: {
       type: String,
-      required: 'E-mail пользователя не должен быть пустым.',
-      unique: 'Такой email уже существует',
+      required: true,
+      unique: true,
     },
-    displayName: {
+    name: {
       type: String,
-      required: 'У пользователя должно быть имя',
-      unique: 'Такое имя уже существует',
+      required: true,
     },
     passwordHash: {
       type: String,
@@ -63,6 +63,6 @@ userSchema.methods.checkPassword = async function (password) {
   return hash === this.passwordHash;
 };
 
-const User = mongoose.model('User', userSchema);
+const User = connection.model('User', userSchema);
 
 export default User;

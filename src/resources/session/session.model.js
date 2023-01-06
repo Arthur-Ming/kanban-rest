@@ -7,10 +7,6 @@ const sessionSchema = new mongoose.Schema(
       unique: true,
       required: true,
     },
-    /*  lastVisit: {
-      type: Date,
-      required: true,
-    }, */
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
@@ -20,10 +16,6 @@ const sessionSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
-//sessionSchema.path('lastVisit').index({ expires: '1m' });
-//sessionSchema.index({ lastVisit: 1 }, { expireAfterSeconds: 5 });
-//sessionSchema.index({ createdAt: 1 }, { expireAfterSeconds: 20 });
 
 const Session = mongoose.model('Session', sessionSchema);
 

@@ -30,8 +30,7 @@ export const login = async (ctx, next) => {
     }
 
     const token = uuid();
-
-    await Session.create({ token, user /* , lastVisit: new Date() */ });
+    await Session.findOneAndUpdate({ user }, { token, user }, { upsert: true });
 
     ctx.body = { token, name: user.displayName, id: user._id };
   })(ctx, next);

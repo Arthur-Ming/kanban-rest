@@ -10,6 +10,7 @@ export const checkAuthentication = async (ctx, next) => {
   if (!token) return next();
 
   const session = await Session.findOne({ token }).populate('user');
+
   if (!session) {
     throw new AuthorizationError();
   }

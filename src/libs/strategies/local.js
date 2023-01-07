@@ -1,5 +1,8 @@
 import { Strategy as LocalStrategy } from 'passport-local';
 import User from '../../resources/users/user.model.js';
+import { NotFoundError, AuthenticationError } from '../../errors/appErrors.js';
+
+const ENTITY_NAME = 'user';
 
 export default new LocalStrategy({ usernameField: 'email', session: false }, async function (
   email,
@@ -9,13 +12,13 @@ export default new LocalStrategy({ usernameField: 'email', session: false }, asy
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return done(null, false, 'Нет такого пользователя');
+      throw new NotFoundError(ENTITY_NAME, { email });
     }
 
     const isValidPassword = await user.checkPassword(password);
 
     if (!isValidPassword) {
-      return done(null, false, 'Неверный пароль');
+      throw new AuthenticationError('Wrong password');
     }
 
     return done(null, user);

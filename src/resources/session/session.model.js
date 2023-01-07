@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import connection from '../../utils/connection.js';
 
 const sessionSchema = new mongoose.Schema({
   token: {

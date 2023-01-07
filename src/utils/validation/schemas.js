@@ -32,6 +32,23 @@ const schemas = {
       title: Joi.string().max(50).required(),
       description: Joi.string().max(200).allow(null, ''),
     }),
+  register: Joi.object()
+    .options({ allowUnknown: false })
+    .keys({
+      name: Joi.string().min(3).max(60).required(),
+      email: Joi.string()
+        .email({ tlds: { allow: false } })
+        .required(),
+      password: Joi.string().min(6).required(),
+    }),
+  login: Joi.object()
+    .options({ allowUnknown: false })
+    .keys({
+      email: Joi.string()
+        .email({ tlds: { allow: false } })
+        .required(),
+      password: Joi.string().min(6).required(),
+    }),
 };
 
 export default schemas;

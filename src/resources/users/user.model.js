@@ -24,6 +24,7 @@ const userSchema = new Schema(
       type: String,
     },
   },
+
   schemaOptions()
 );
 function generatePassword(salt, password) {
@@ -63,6 +64,7 @@ userSchema.methods.checkPassword = async function (password) {
   return hash === this.passwordHash;
 };
 
-const User = connection.model('User', userSchema);
+//const User = connection.model('User', userSchema);
+const User = mongoose.model('User', userSchema);
 
 export default User;

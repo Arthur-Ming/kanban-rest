@@ -1,15 +1,19 @@
 import Router from 'koa-router';
-import { login, getAllUsers, register, getUserById } from './user.controllers.js';
+import { signIn, getAllUsers, addUser, getUserById } from './user.controllers.js';
 import { checkAuthentication, mustBeAuthenticated } from '../../utils/authentication.js';
+import validator from '../../utils/validation/validator.js';
+import schemas from '../../utils/validation/schemas.js';
 
-const usersRouter = new Router();
+const { register, login } = schemas;
+
+const usersRouter = new Router({ prefix: '/users' });
 
 usersRouter.use(checkAuthentication);
 
 usersRouter
-  .get('/users', mustBeAuthenticated, getAllUsers)
-  .get('users/:userId', mustBeAuthenticated, getUserById)
-  .post('/users/login', login)
-  .post('/users/register', register);
+  .get('/', mustBeAuthenticated, getAllUsers)
+  .get('/:userId', mustBeAuthenticated, getUserById)
+  .post('/login', validator(login, 'body'), signIn)
+  .post('/register', validator(register, 'body'), addUser);
 
 export default usersRouter;

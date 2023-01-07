@@ -1,19 +1,15 @@
-import User from './user.model.js';
 import { v4 as uuid } from 'uuid';
-import Session from '../session/session.model.js';
 import passport from '../../libs/passport.js';
-import { save } from './user.service.js';
+import { save, getAll, get } from './user.service.js';
+import { upsert } from '../session/session.service.js';
 
-export const register = async (ctx) => {
+export const addUser = async (ctx) => {
   const body = ctx.request.body;
-
-  const u = await save(body);
-  await u.setPassword(body.password);
-  const { name, _id: id } = await u.save();
+  const { name, _id: id } = await save(body);
   ctx.body = { name, id };
 };
 
-export const login = async (ctx, next) => {
+export const signIn = async (ctx, next) => {
   await passport.authenticate('local', async (err, user, info) => {
     if (err) throw err;
 
@@ -24,16 +20,18 @@ export const login = async (ctx, next) => {
     }
 
     const token = uuid();
-    await Session.findOneAndUpdate({ user }, { token, user }, { upsert: true, new: true });
 
-    ctx.body = { token, name: user.displayName, id: user._id };
+    await upsert(user, token);
+
+    ctx.body = { token, name: user.name, id: user._id };
   })(ctx, next);
 };
 
 export const getAllUsers = async (ctx) => {
-  ctx.body = 'users';
+  ctx.body = await getAll();
 };
 
 export const getUserById = async (ctx) => {
-  ctx.body = 'users';
+  const { userId } = ctx.params;
+  ctx.body = await get(userId);
 };

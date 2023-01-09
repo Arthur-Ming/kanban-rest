@@ -5,7 +5,11 @@ import columnsRouter from './resources/columns/column.routes.js';
 import tasksRouter from './resources/tasks/task.routes.js';
 import usersRouter from './resources/users/user.routes.js';
 import errorHandler from './errors/errorHandler.js';
+import cors from '@koa/cors';
+
 const app = new Koa();
+
+app.use(cors());
 
 app.use(errorHandler);
 

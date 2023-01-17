@@ -11,7 +11,7 @@ export const getTaskById = async (ctx) => {
 };
 
 export const creatTask = async (ctx) => {
-  const { boardId, columnId } = req.params;
+  const { boardId, columnId } = ctx.params;
   const body = ctx.request.body;
 
   ctx.body = await create(boardId, columnId, body);

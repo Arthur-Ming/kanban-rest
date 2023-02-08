@@ -12,6 +12,9 @@ export const get = async (boardId) => {
     path: 'columns',
     populate: {
       path: 'tasks',
+      populate: {
+        path: 'files',
+      },
     },
   });
 

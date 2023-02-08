@@ -9,8 +9,9 @@ export const getAll = async (boardId, columnId) => {
 };
 
 export const get = async (boardId, columnId, taskId) => {
-  const task = await Task.findOne({ _id: taskId, boardId, columnId });
-
+  const task = await Task.findOne({ _id: taskId, boardId, columnId }).populate({
+    path: 'files',
+  });
   if (!task) {
     throw new NotFoundError('task', { id: taskId, boardId, columnId });
   }

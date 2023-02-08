@@ -23,6 +23,7 @@ const taskSchema = new Schema(
       type: String,
       default: '',
     },
+    files: [{ type: mongoose.Types.ObjectId, ref: 'File' }],
   },
   schemaOptions()
 );

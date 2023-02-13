@@ -1,26 +1,27 @@
 import Router from 'koa-router';
 import multer from '@koa/multer';
-import validator from '../../utils/validation/validator.js';
-
 import schemas from '../../utils/validation/schemas.js';
-import { v4 as uuid } from 'uuid';
-import { fileUpload } from './file.controllers.js';
+import { fileUpload, fileDelete } from './file.controllers.js';
+
+import { nanoid } from 'nanoid';
+import mime from 'mime-types';
 
 const { columnId, taskId, task } = schemas;
-const filesRouter = Router({ prefix: '/files/:taskId' });
+const filesRouter = Router({ prefix: '/tasks/:taskId/files' });
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/');
   },
-  /* filename: function (req, file, cb) {
-    const extension = file.originalname.split('.').pop();
-    cb(null, `${uuid()}.${extension}`);
-  }, */
+  filename: function (req, file, cb) {
+    const id = nanoid();
+    const ext = mime.extension(file.mimetype);
+    cb(null, `${id}.${ext}`);
+  },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
-filesRouter.post('/upload', upload.single('image'), fileUpload);
+filesRouter.post('/', upload.single('image'), fileUpload).delete('/:fileId', fileDelete);
 
 export default filesRouter;

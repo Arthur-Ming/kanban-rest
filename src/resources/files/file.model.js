@@ -14,10 +14,6 @@ const fileSchema = new Schema(
       type: String,
       required: true,
     },
-    extension: {
-      type: String,
-      required: true,
-    },
   },
   schemaOptions()
 );

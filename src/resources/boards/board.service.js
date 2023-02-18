@@ -24,6 +24,15 @@ export const get = async (boardId) => {
   return board;
 };
 
+export const getColumnIds = async (boardId) => {
+  const board = await Board.findOne({ _id: boardId }, { columns: 1 });
+
+  if (!board) {
+    throw new NotFoundError('board', { id: boardId });
+  }
+  return board;
+};
+
 export const create = async (board) => {
   return await Board.create(board);
 };
@@ -49,5 +58,24 @@ export const update = async (boardId, body) => {
   if (!board) {
     throw new NotFoundError('board', { id: boardId });
   }
+  return board;
+};
+
+export const updateOrder = async (boardId, body) => {
+  const board = await Board.findOne({ _id: boardId }, { columns: 1 });
+
+  if (!board) {
+    throw new NotFoundError('board', { id: boardId });
+  }
+
+  const { source, destination, columnId } = body;
+
+  board.columns.splice(source.index, 1);
+  board.columns.splice(destination.index, 0, columnId);
+
+  board.save((err) => {
+    if (err) throw new Error(err);
+  });
+
   return board;
 };

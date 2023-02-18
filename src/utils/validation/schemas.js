@@ -49,6 +49,29 @@ const schemas = {
         .required(),
       password: Joi.string().min(6).required(),
     }),
+  columnsOrder: Joi.object()
+    .options({ allowUnknown: false })
+    .keys({
+      columnId: Joi.objectId(),
+      source: Joi.object({
+        index: Joi.number().required(),
+      }).required(),
+      destination: Joi.object({
+        index: Joi.number().required(),
+      }).required(),
+    }),
+  tasksOrder: Joi.object()
+    .options({ allowUnknown: false })
+    .keys({
+      taskId: Joi.objectId(),
+      source: Joi.object({
+        index: Joi.number().required(),
+      }).required(),
+      destination: Joi.object({
+        index: Joi.number().required(),
+        columnId: Joi.objectId(),
+      }).required(),
+    }),
 };
 
 export default schemas;

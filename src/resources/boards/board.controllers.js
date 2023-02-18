@@ -1,4 +1,4 @@
-import { getAll, get, create, remove, update } from './board.service.js';
+import { getAll, get, create, remove, update, getColumnIds, updateOrder } from './board.service.js';
 
 export const getAllBoards = async (ctx) => {
   ctx.body = await getAll();
@@ -24,4 +24,17 @@ export const updateBoard = async (ctx) => {
   const body = ctx.request.body;
 
   ctx.body = await update(boardId, body);
+};
+
+export const getColumnsOrder = async (ctx) => {
+  const { boardId } = ctx.params;
+
+  ctx.body = await getColumnIds(boardId);
+};
+
+export const updateColumnsOrder = async (ctx) => {
+  const { boardId } = ctx.params;
+  const body = ctx.request.body;
+
+  ctx.body = await updateOrder(boardId, body);
 };

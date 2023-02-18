@@ -1,5 +1,4 @@
-import { getAll, create, get, remove, update } from './column.service.js';
-import { StatusCodes } from 'http-status-codes';
+import { getAll, create, get, remove, update, getTaskIds, updateOrder } from './column.service.js';
 
 export const getAllColumns = async (ctx) => {
   const { boardId } = ctx.params;
@@ -27,4 +26,16 @@ export const updateColumn = async (ctx) => {
   const body = ctx.request.body;
 
   ctx.body = await update(boardId, columnId, body);
+};
+
+export const getTasksOrder = async (ctx) => {
+  const { boardId, columnId } = ctx.params;
+  ctx.body = await getTaskIds(boardId, columnId);
+};
+
+export const updateTasksOrder = async (ctx) => {
+  const { boardId, columnId } = ctx.params;
+  const body = ctx.request.body;
+
+  ctx.body = await updateOrder(boardId, columnId, body);
 };

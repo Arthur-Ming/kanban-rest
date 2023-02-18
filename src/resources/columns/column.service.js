@@ -64,3 +64,70 @@ export const update = async (boardId, columnId, body) => {
   }
   return column;
 };
+
+export const getTaskIds = async (boardId, columnId) => {
+  const column = await Column.findOne({ _id: columnId, boardId }, { tasks: 1 });
+
+  if (!column) {
+    throw new NotFoundError('column', { id: columnId, boardId });
+  }
+  return column;
+};
+
+export const updateOrder = async (boardId, columnId, body) => {
+  const columnSource = await Column.findOne({ _id: columnId, boardId }, { tasks: 1 });
+
+  if (!columnSource) {
+    throw new NotFoundError('column', { id: columnId, boardId });
+  }
+
+  const { source, destination, taskId } = body;
+
+  const tasksSource = [...columnSource.tasks];
+
+  if (columnId === destination.columnId) {
+    columnSource.tasks.splice(source.index, 1);
+    columnSource.tasks.splice(destination.index, 0, taskId);
+
+    columnSource.save((err) => {
+      if (err) throw new Error(err);
+    });
+
+    return {
+      source: {
+        id: columnId,
+        tasks: tasksSource,
+      },
+      destination: columnSource,
+    };
+  }
+  if (columnId !== destination.columnId) {
+    const columnDestination = await Column.findOne(
+      { _id: destination.columnId, boardId },
+      { tasks: 1 }
+    );
+    if (!columnDestination) {
+      throw new NotFoundError('column', { id: destination.columnId, boardId });
+    }
+    const tasksDestination = [...columnDestination.tasks];
+    const tasksSource = [...columnSource.tasks];
+
+    columnSource.tasks.splice(source.index, 1);
+    columnDestination.tasks.splice(destination.index, 0, taskId);
+
+    columnSource.save((err) => {
+      if (err) throw new Error(err);
+    });
+    columnDestination.save((err) => {
+      if (err) throw new Error(err);
+    });
+
+    return {
+      source: {
+        id: columnId,
+        tasks: tasksSource,
+      },
+      destination: columnDestination,
+    };
+  }
+};

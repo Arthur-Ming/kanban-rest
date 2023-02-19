@@ -2,7 +2,7 @@ import Column from './column.model.js';
 import Board from '../boards/board.model.js ';
 import Task from '../tasks/task.model.js';
 import mongoose from 'mongoose';
-import { NotFoundError } from '../../errors/appErrors.js';
+import { NotFoundError, UnprocessableEntityError } from '../../errors/appErrors.js';
 
 export const getAll = async (boardId) => {
   return await Column.find({ boardId });
@@ -65,15 +65,6 @@ export const update = async (boardId, columnId, body) => {
   return column;
 };
 
-export const getTaskIds = async (boardId, columnId) => {
-  const column = await Column.findOne({ _id: columnId, boardId }, { tasks: 1 });
-
-  if (!column) {
-    throw new NotFoundError('column', { id: columnId, boardId });
-  }
-  return column;
-};
-
 export const updateOrder = async (boardId, columnId, body) => {
   const columnSource = await Column.findOne({ _id: columnId, boardId }, { tasks: 1 });
 
@@ -83,9 +74,17 @@ export const updateOrder = async (boardId, columnId, body) => {
 
   const { source, destination, taskId } = body;
 
+  if (!columnSource.tasks.includes(taskId)) {
+    throw new NotFoundError(`task in column ${columnId}`, { id: taskId });
+  }
+
   const tasksSource = [...columnSource.tasks];
 
   if (columnId === destination.columnId) {
+    if (destination.index >= columnSource.tasks.length) {
+      throw new UnprocessableEntityError(`"destination.index" must be less than "tasks.length"`);
+    }
+
     columnSource.tasks.splice(source.index, 1);
     columnSource.tasks.splice(destination.index, 0, taskId);
 
@@ -94,6 +93,7 @@ export const updateOrder = async (boardId, columnId, body) => {
     });
 
     return {
+      taskId,
       source: {
         id: columnId,
         tasks: tasksSource,
@@ -109,11 +109,17 @@ export const updateOrder = async (boardId, columnId, body) => {
     if (!columnDestination) {
       throw new NotFoundError('column', { id: destination.columnId, boardId });
     }
-    const tasksDestination = [...columnDestination.tasks];
+
+    if (destination.index > columnDestination.tasks.length) {
+      throw new UnprocessableEntityError(`"destination.index" must be less than "tasks.length"`);
+    }
+
     const tasksSource = [...columnSource.tasks];
 
     columnSource.tasks.splice(source.index, 1);
     columnDestination.tasks.splice(destination.index, 0, taskId);
+
+    await Task.findByIdAndUpdate(taskId, { $set: { columnId: destination.columnId } });
 
     columnSource.save((err) => {
       if (err) throw new Error(err);
@@ -123,6 +129,7 @@ export const updateOrder = async (boardId, columnId, body) => {
     });
 
     return {
+      taskId,
       source: {
         id: columnId,
         tasks: tasksSource,

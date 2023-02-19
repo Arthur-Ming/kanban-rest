@@ -52,24 +52,25 @@ const schemas = {
   columnsOrder: Joi.object()
     .options({ allowUnknown: false })
     .keys({
-      columnId: Joi.objectId(),
+      columnId: Joi.objectId().required(),
       source: Joi.object({
-        index: Joi.number().required(),
+        index: Joi.number().min(0).required(),
       }).required(),
       destination: Joi.object({
-        index: Joi.number().required(),
+        index: Joi.number().min(0).required(),
       }).required(),
     }),
   tasksOrder: Joi.object()
+    .required()
     .options({ allowUnknown: false })
     .keys({
-      taskId: Joi.objectId(),
+      taskId: Joi.objectId().required(),
       source: Joi.object({
-        index: Joi.number().required(),
+        index: Joi.number().min(0).required(),
       }).required(),
       destination: Joi.object({
-        index: Joi.number().required(),
-        columnId: Joi.objectId(),
+        index: Joi.number().min(0).required(),
+        columnId: Joi.objectId().required(),
       }).required(),
     }),
 };

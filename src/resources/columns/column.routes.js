@@ -9,9 +9,12 @@ import {
   updateTasksOrder,
 } from './column.controllers.js';
 import schemas from '../../utils/validation/schemas.js';
+import { checkAuthentication, mustBeAuthenticated } from '../../utils/authentication.js';
 
 const { boardId, columnId, column, tasksOrder } = schemas;
 const columnsRouter = Router({ prefix: '/boards/:boardId/columns' });
+
+columnsRouter.use(checkAuthentication, mustBeAuthenticated);
 
 columnsRouter
   .get('/', validator(boardId, 'params'), getAllColumns)

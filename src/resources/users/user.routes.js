@@ -12,7 +12,7 @@ usersRouter.use(checkAuthentication);
 
 usersRouter
   .get('/', mustBeAuthenticated, getAllUsers)
-  .get('/:userId', mustBeAuthenticated, getUserById)
+  .get('/:userId', /*  mustBeAuthenticated, */ getUserById)
   .post('/login', validator(login, 'body'), signIn)
   .post('/register', validator(register, 'body'), addUser);
 

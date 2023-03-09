@@ -8,10 +8,10 @@ const { register, login } = schemas;
 
 const usersRouter = new Router({ prefix: '/users' });
 
-usersRouter.use(checkAuthentication);
+/* usersRouter.use(checkAuthentication); */
 
 usersRouter
-  .get('/', mustBeAuthenticated, getAllUsers)
+  .get('/', /* mustBeAuthenticated */ getAllUsers)
   .get('/:userId', /*  mustBeAuthenticated, */ getUserById)
   .post('/login', validator(login, 'body'), signIn)
   .post('/register', validator(register, 'body'), addUser);

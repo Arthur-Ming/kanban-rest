@@ -14,7 +14,7 @@ import { checkAuthentication, mustBeAuthenticated } from '../../utils/authentica
 const { boardId, columnId, column, tasksOrder } = schemas;
 const columnsRouter = Router({ prefix: '/boards/:boardId/columns' });
 
-/* columnsRouter.use(checkAuthentication, mustBeAuthenticated); */
+columnsRouter.use(checkAuthentication, mustBeAuthenticated);
 
 columnsRouter
   .get('/', validator(boardId, 'params'), getAllColumns)

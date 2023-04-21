@@ -7,8 +7,9 @@ import boardsRouter from './resources/boards/board.routes.js';
 import columnsRouter from './resources/columns/column.routes.js';
 import tasksRouter from './resources/tasks/task.routes.js';
 import usersRouter from './resources/users/user.routes.js';
-import errorHandler from './errors/errorHandler.js';
+import authRouter from './resources/auth/auth.routes.js';
 import filesRouter from './resources/files/file.routes.js';
+import errorHandler from './errors/errorHandler.js';
 import cors from '@koa/cors';
 import * as url from 'url';
 
@@ -29,6 +30,7 @@ app.use(boardsRouter.routes());
 app.use(columnsRouter.routes());
 app.use(tasksRouter.routes());
 app.use(usersRouter.routes());
+app.use(authRouter.routes());
 app.use(filesRouter.routes());
 
 export default app;

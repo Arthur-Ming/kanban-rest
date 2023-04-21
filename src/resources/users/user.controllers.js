@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import passport from '../../libs/passport.js';
 import { save, getAll, get } from './user.service.js';
-import { upsert } from '../session/session.service.js';
+import { upsert, remove } from '../session/session.service.js';
 
 export const addUser = async (ctx) => {
   const body = ctx.request.body;
@@ -23,8 +23,13 @@ export const signIn = async (ctx, next) => {
 
     await upsert(user, token);
 
-    ctx.body = { token, name: user.name, id: user._id };
+    ctx.body = { token, name: user.name, id: user._id, email: user.email };
   })(ctx, next);
+};
+
+export const signOut = async (ctx, next) => {
+  console.log(ctx);
+  ctx.body = 'del';
 };
 
 export const getAllUsers = async (ctx) => {

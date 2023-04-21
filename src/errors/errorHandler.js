@@ -6,10 +6,20 @@ const errorHandler = async (ctx, next) => {
   } catch (err) {
     if (err.status) {
       ctx.status = err.status;
-      ctx.body = err.message;
+      ctx.body = {
+        error: {
+          status: err.status,
+          message: err.message,
+        },
+      };
     } else {
       ctx.status = StatusCodes.INTERNAL_SERVER_ERROR;
-      ctx.body = getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR);
+      ctx.body = {
+        error: {
+          status: StatusCodes.INTERNAL_SERVER_ERROR,
+          message: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR),
+        },
+      };
     }
   }
 };
